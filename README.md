@@ -2,7 +2,6 @@
 
 [![Portfolio Preview](https://raw.githubusercontent.com/satyajeetch1991/satyajeetch1991.github.io/main/preview.png)](https://satyajeetch1991.github.io/)
 
-
 A responsive, animated personal portfolio website made using **HTML**, **CSS**, and **Vanilla JavaScript** featuring:
 
 - 💫 Starry animated background (canvas + JS)
