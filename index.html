@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Satyajeet Chavan | About Me</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Fira Code', monospace;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 100px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 3em;
+    }
+    a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .toggle-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #222;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .typed-text {
+      color: #00ffff;
+      font-weight: bold;
+      font-size: 1.5rem;
+      height: 2rem;
+      margin-bottom: 1rem;
+    }
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 20px auto;
+      object-fit: cover;
+      border: 2px solid #00ffff;
+    }
+    .button-group a {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      border: 1px solid #00ffff;
+      border-radius: 4px;
+      color: #00ffff;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .button-group a:hover {
+      background: #00ffff;
+      color: black;
+    }
+  </style>
+</head>
+<body class="dark">
+  <button class="toggle-btn" onclick="toggleTheme()">Toggle Theme</button>
+  <canvas id="constellation"></canvas>
+  <div class="content">
+    <img class="profile-pic" src="https://avatars.githubusercontent.com/u/116198314?v=4" alt="Satyajeet Profile" />
+    <h1>👋 Hi, I'm Satyajeet Chavan</h1>
+    <div class="typed-text" id="typed"></div>
+    <p>
+      📍 Pune, India<br/>
+      🎓 B.Tech in Artificial Intelligence at VIIT Pune<br/>
+      🛠️ Skills: React, Node.js, MongoDB, Python, ML, APIs<br/>
+      🏆 3rd Place - CodeSprint Pune 2024
+    </p>
+    <div class="button-group">
+      <a href="https://github.com/satyajeetch1991" target="_blank">View My GitHub</a>
+      <a href="https://drive.google.com/file/d/1LcMeB645MO9YpqOY_zef7Yrq7GsleBiR/view?usp=sharing" target="_blank">Download Resume</a>
+      <a href="mailto:chavansatyjeet2004@gmail.com">Contact Me</a>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('constellation');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let stars = [], starCount = 120;
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < starCount; i++) {
+        let star = stars[i];
+        star.x += star.vx;
+        star.y += star.vy;
+
+        if (star.x < 0 || star.x > canvas.width) star.vx *= -1;
+        if (star.y < 0 || star.y > canvas.height) star.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = star.color;
+        ctx.fill();
+
+        for (let j = i + 1; j < starCount; j++) {
+          let dx = stars[j].x - star.x;
+          let dy = stars[j].y - star.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(star.x, star.y);
+            ctx.lineTo(stars[j].x, stars[j].y);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      document.body.style.backgroundColor = document.body.classList.contains('dark') ? '#000' : '#f4f4f4';
+      document.body.style.color = document.body.classList.contains('dark') ? 'white' : 'black';
+    }
+
+    const phrases = [
+      "I'm a Full-Stack Developer",
+      "React & Node.js Enthusiast",
+      "AI/ML Explorer",
+      "Cloud & API Developer"
+    ];
+
+    let i = 0, j = 0, currentPhrase = [], isDeleting = false, isEnd = false;
+    const typed = document.getElementById('typed');
+
+    function loop() {
+      isEnd = false;
+      typed.innerHTML = currentPhrase.join('');
+
+      if (i < phrases.length) {
+        if (!isDeleting && j <= phrases[i].length) {
+          currentPhrase.push(phrases[i][j]);
+          j++;
+          typed.innerHTML = currentPhrase.join('');
+        }
+
+        if (isDeleting && j <= phrases[i].length) {
+          currentPhrase.pop(phrases[i][j]);
+          j--;
+          typed.innerHTML = currentPhrase.join('');
+        }
+
+        if (j === phrases[i].length) {
+          isEnd = true;
+          isDeleting = true;
+        }
+
+        if (isDeleting && j === 0) {
+          currentPhrase = [];
+          isDeleting = false;
+          i++;
+          if (i === phrases.length) i = 0;
+        }
+      }
+      const spedUp = Math.random() * (80 - 50) + 50;
+      const normalSpeed = Math.random() * (200 - 100) + 100;
+      const time = isEnd ? 2000 : isDeleting ? spedUp : normalSpeed;
+      setTimeout(loop, time);
+    }
+    loop();
+  </script>
+</body>
+</html>
